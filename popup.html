@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<h2>CW Logger MVP</h2>
+
+<div class="form-group">
+    <label>Participant ID</label>
+    <input type="text" id="participantId" placeholder="e.g. P01">
+</div>
+<div class="form-group">
+    <label>Task ID</label>
+    <input type="text" id="taskId" placeholder="e.g. Task_1">
+</div>
+<div class="form-group">
+    <label>Session ID</label>
+    <input type="text" id="sessionId" placeholder="(auto if empty)">
+</div>
+
+<div class="controls">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn" disabled>Stop</button>
+</div>
+<div class="controls">
+    <button id="exportBtn" disabled>Export JSON</button>
+    <button id="clearBtn" disabled>Clear Session</button>
+</div>
+
+<div class="status">
+    <div><strong>Status: </strong><span id="statusText">Unknown</span></div>
+    <div id="eventCount">Events: 0</div>
+    <div id="currentUrl" class="url-text">No active session data</div>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

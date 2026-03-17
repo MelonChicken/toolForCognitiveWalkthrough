@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Cognitive Walkthrough Logger",
+  "version": "1.0",
+  "description": "MVP Chrome Extension for research logging in Cognitive Walkthrough experiments.",
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "CW Logger"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
