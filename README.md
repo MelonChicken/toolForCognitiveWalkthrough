@@ -36,9 +36,13 @@
 * `popup.html`: ID 입력과 로거 제어를 위한 팝업 UI 구조입니다.
 * `popup.js`: 팝업 동작 로직입니다. 현재 세션 상태를 읽고, 세션 시작/중지, JSON export, 저장 데이터 삭제를 수행하며, 1초마다 팝업 상태를 갱신합니다.
 * `popup.css`: 기본 팝업 스타일만 포함합니다.
-* `toolForCW.iml`: IDE 프로젝트 메타데이터이며, 확장 프로그램 실행에는 사용되지 않습니다.
 
 ## 3. 로드 및 실행 방법
+
+먼저 git clone을 통해 저장합니다.
+```bash
+git clone https://github.com/MelonChicken/toolForCognitiveWalkthrough.git
+```
 
 ### Chrome에 unpacked extension으로 로드하기
 
