@@ -9,13 +9,40 @@ function formatTimestamp(tsMs) {
     return `${pad2(date.getFullYear() % 100)}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())} ${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`;
 }
 
+function getNavigationType() {
+    const navEntry = performance.getEntriesByType('navigation')[0];
+    if (navEntry && typeof navEntry.type === 'string') {
+        return navEntry.type;
+    }
+
+    if (performance.navigation) {
+        switch (performance.navigation.type) {
+            case 1:
+                return 'reload';
+            case 2:
+                return 'back_forward';
+            default:
+                return 'navigate';
+        }
+    }
+
+    return 'navigate';
+}
+
+function emitPageEntry(extraData = {}) {
+    logEvent('page_load', {
+        navigationType: getNavigationType(),
+        ...extraData
+    });
+}
+
 // Ask Background if there's an active session on this tabId
 function checkState() {
     chrome.runtime.sendMessage({ type: 'CHECK_ACTIVE' }, (res) => {
         if (chrome.runtime.lastError) return;
         if (res && res.active) {
             isRecording = true;
-            logEvent('page_load', {});
+            emitPageEntry();
             attachListeners();
         }
     });
@@ -25,7 +52,7 @@ chrome.runtime.onMessage.addListener((msg) => {
     if (msg.type === 'START_RECORDING') {
         if (!isRecording) {
             isRecording = true;
-            logEvent('page_load', {});
+            emitPageEntry();
             attachListeners();
         }
     } else if (msg.type === 'STOP_RECORDING') {
@@ -40,6 +67,15 @@ chrome.runtime.onMessage.addListener((msg) => {
 // Synthetic page events
 window.addEventListener('beforeunload', () => {
     if (isRecording) logEvent('page_unload', {});
+});
+
+window.addEventListener('pageshow', (event) => {
+    if (isRecording && event.persisted) {
+        emitPageEntry({
+            pageTransition: 'pageshow',
+            persisted: true
+        });
+    }
 });
 
 document.addEventListener('visibilitychange', () => {
