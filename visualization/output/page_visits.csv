@@ -1,0 +1,10 @@
+﻿visit_index,entry_type,start_ts,end_ts,start_time,end_time,start_sec,end_sec,duration_sec,url,title,page_label
+0,page_load,1774498862574,1774498885890,26-03-26 13:21:02,26-03-26 13:21:25,0.002,23.318,23.316,https://www.q-net.or.kr/man001.do?gSite=Q,Q-net 자격의모든것,Q-net 자격의모든것
+1,page_load,1774498886097,1774498889570,26-03-26 13:21:26,26-03-26 13:21:29,23.525,26.998,3.473,https://www.q-net.or.kr/cst006.do?id=cst00601&gSite=Q&gId=,각종서식 자료실 목록 | Q-net,각종서식 자료실 목록
+2,page_load,1774498889742,1774498900849,26-03-26 13:21:29,26-03-26 13:21:40,27.17,38.277,11.107,https://www.q-net.or.kr/cst006.do?id=cst00601&code=1203&gSite=Q&gId=,기출문제(기술사) 자료실 목록 | Q-net,기출문제(기술사) 자료실 목록
+3,page_load,1774498901538,1774498907353,26-03-26 13:21:41,26-03-26 13:21:47,38.966,44.781,5.815,https://www.q-net.or.kr/cst006.do?id=cst00601&code=1204&gSite=Q&gId=,공개문제 자료실 목록 | Q-net,공개문제 자료실 목록
+4,page_load,1774498907488,1774498924153,26-03-26 13:21:47,26-03-26 13:22:04,44.916,61.581,16.665,https://www.q-net.or.kr/cst006.do?id=cst00601&code=1203&gSite=Q&gId=,기출문제(기술사) 자료실 목록 | Q-net,기출문제(기술사) 자료실 목록
+5,page_load,1774498924388,1774498933298,26-03-26 13:22:04,26-03-26 13:22:13,61.816,70.726,8.91,https://www.q-net.or.kr/man001.do?gSite=Q,Q-net 자격의모든것,Q-net 자격의모든것
+6,page_load,1774498933468,1774498946168,26-03-26 13:22:13,26-03-26 13:22:26,70.896,83.596,12.7,https://www.q-net.or.kr/rcv013.do?id=rcv01312&gSite=Q&gId=,수험자 지참 준비물 조회 | Q-net,수험자 지참 준비물 조회
+7,page_load,1774498946406,1774498955030,26-03-26 13:22:26,26-03-26 13:22:35,83.834,92.458,8.624,https://www.q-net.or.kr/man001.do?gSite=Q,Q-net 자격의모든것,Q-net 자격의모든것
+8,page_load,1774498956506,1774498961760,26-03-26 13:22:36,26-03-26 13:22:41,93.934,99.188,5.254,https://www.q-net.or.kr/totalSearch.do?gSite=Q&totalQuery=139%ED%9A%8C&searchSort=weight&pageNum=1&resFlag=off&searchMenu=total&gId=&searchQuery=139%ED%9A%8C,통합검색 || Q-net,통합검색

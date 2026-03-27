@@ -124,7 +124,8 @@ git clone https://github.com/MelonChicken/toolForCognitiveWalkthrough.git
 저장되는 세션 객체에는 다음 정보가 포함됩니다.
 
 * 연구자가 입력한 식별자: `participantId`, `taskId`, `sessionId`
-* 세션 메타데이터: `tabId`, `startTime`, `endTime`, `startedUrl`, `endedUrl`, `userAgent`
+* 세션 메타데이터: `tabId`, `startTime`, `startTimeMs`, `endTime`, `endTimeMs`, `startedUrl`, `endedUrl`, `userAgent`
+* 탐색 상태: `navigationStack`, `navigationIndex`
 * 이벤트 요약: `eventCount`
 * 이벤트 목록: `events`
 
@@ -162,6 +163,7 @@ git clone https://github.com/MelonChicken/toolForCognitiveWalkthrough.git
 
 * `session_start`: 세션 시작 직후 `background.js`가 삽입하는 이벤트
 * `page_load`: 추적 중인 탭의 페이지에서 로깅이 활성화될 때 `content.js`가 생성하는 이벤트
+* `back_navigation`: 브라우저 history 이동(`back_forward`) 중 세션 히스토리상 이전 페이지로 돌아간 것으로 판정될 때 기록되는 이벤트
 * `page_unload`: 추적 중인 페이지가 unload되기 시작할 때 `beforeunload`에서 생성되는 이벤트
 * `visibility_change`: 추적 중인 페이지에서 `document.visibilityState`가 변경될 때 생성되는 이벤트
 * `session_stop`: `content.js`에 구현되어 있지만, 일반적인 stop 흐름에서는 세션이 먼저 종료되어 이 이벤트가 실제 JSON에 저장되지 않습니다.
@@ -204,6 +206,8 @@ export되는 JSON은 두 수준으로 구성됩니다.
 | `endedUrl`      | string           | 수락된 이벤트들 중 마지막으로 확인된 URL입니다. 처음에는 `startedUrl`과 같습니다.     | `"https://example.com/dashboard"` | 모든 세션 |
 | `userAgent`     | string           | background worker 컨텍스트에서 가져온 브라우저 user agent 문자열입니다.      | `"Mozilla/5.0 ..."`               | 모든 세션 |
 | `eventCount`    | number           | 저장된 이벤트 수입니다. 코드상 항상 `events.length`와 같습니다.               | `42`                              | 모든 세션 |
+| `navigationStack` | string 배열      | background script가 추적하는 세션 내 페이지 히스토리 스택입니다. 뒤로가기 판정에 사용됩니다. | `["https://a", "https://b"]`      | 모든 세션 |
+| `navigationIndex` | number          | `navigationStack`에서 현재 위치 인덱스입니다.                                 | `1`                               | 모든 세션 |
 | `events`        | object 배열        | 세션의 순서 있는 이벤트 기록 배열입니다.                                   | `[ {...}, {...} ]`                | 모든 세션 |
 
 ### 이벤트 단위 필드
@@ -248,6 +252,10 @@ export되는 JSON은 두 수준으로 구성됩니다.
 | `maskedValue`     | string           | 입력값 길이와 동일한 개수의 `*`로 이루어진 문자열입니다. `password`, `email`, `tel`, `search`, `text`, `url`, `number`, `date`, 그리고 모든 `textarea`에서 생성됩니다. | `"************"`                  | 마스킹 대상 `input`/`textarea` 값일 때                         |
 | `selectedText`    | string           | 현재 선택된 `<option>`의 표시 텍스트입니다.                                                                                                       | `"United States"`                 | 타깃이 `select`이고 선택 옵션이 있을 때                             |
 | `visibilityState` | string           | visibility change 시점의 `document.visibilityState` 값입니다.                                                                              | `"hidden"`                        | `visibility_change`                                    |
+| `navigationType`  | string           | 브라우저 navigation timing 기준 페이지 진입 타입입니다. 보통 `navigate`, `reload`, `back_forward` 중 하나입니다.                                      | `"back_forward"`                  | `page_load`, `back_navigation`                         |
+| `historyTraversal` | string          | `back_forward` 진입이 세션 히스토리 기준 `back`인지 `forward`인지 나타냅니다. 현재 `back`이면 이벤트 타입이 `back_navigation`으로 저장됩니다.                 | `"back"`                          | `page_load`, `back_navigation`                         |
+| `persisted`       | boolean          | BFCache 복원으로 `pageshow`가 발생했는지 여부입니다.                                                                                          | `true`                            | BFCache 기반 `page_load`, `back_navigation`            |
+| `pageTransition`  | string           | 페이지 진입을 기록하게 만든 브라우저 이벤트 이름입니다. 현재는 BFCache 복원 시 `"pageshow"`가 들어갈 수 있습니다.                                               | `"pageshow"`                      | BFCache 기반 `page_load`, `back_navigation`            |
 
 필드 등장에 대한 주의:
 
@@ -267,8 +275,10 @@ export되는 JSON은 두 수준으로 구성됩니다.
 ### 페이지 및 이동 신호 해석
 
 * `page_load`는 추적 중인 탭의 해당 페이지에서 로깅이 활성화되었음을 의미합니다.
+* `back_navigation`은 브라우저 history 이동 중 이전에 방문했던 페이지로 되돌아간 것으로 판정된 페이지 진입 이벤트입니다.
 * `page_unload`는 추적 중인 페이지가 unload되기 시작했음을 의미합니다.
 * `page_unload` 뒤에 `page_load`가 나오면, 보통 같은 탭 안에서 페이지 이동 또는 새로고침이 일어났다고 볼 수 있습니다.
+* `navigationType`이 `back_forward`여도 항상 뒤로가기는 아닙니다. 세션 히스토리 스택과 대조해 이전 인덱스로 이동한 경우에만 `back_navigation`으로 저장됩니다.
 * `startedUrl`은 세션 첫 페이지 URL입니다.
 * `endedUrl`은 마지막으로 관측된 URL일 뿐이며, 반드시 “최종 완료 페이지”를 뜻하지는 않습니다.
 

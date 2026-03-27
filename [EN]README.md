@@ -119,7 +119,8 @@ This removes the stored `session` object from `chrome.storage.local`. If the ses
 The stored session object contains:
 
 - Researcher-entered identifiers: `participantId`, `taskId`, `sessionId`
-- Session metadata: `tabId`, `startTime`, `endTime`, `startedUrl`, `endedUrl`, `userAgent`
+- Session metadata: `tabId`, `startTime`, `startTimeMs`, `endTime`, `endTimeMs`, `startedUrl`, `endedUrl`, `userAgent`
+- Navigation state: `navigationStack`, `navigationIndex`
 - Event summary: `eventCount`
 - Event list: `events`
 
@@ -154,6 +155,7 @@ The extension currently records the following event types.
 
 - `session_start`: inserted by `background.js` immediately when a session starts
 - `page_load`: emitted by `content.js` when logging becomes active on a page in the tracked tab
+- `back_navigation`: emitted when a `back_forward` history traversal resolves to an earlier page in the session history stack
 - `page_unload`: emitted from `beforeunload` while a tracked page is unloading
 - `visibility_change`: emitted when `document.visibilityState` changes on the tracked page
 - `session_stop`: implemented in `content.js`, but in normal stop flow it is not persisted because the session is ended before the event is accepted
@@ -196,6 +198,8 @@ The exported JSON has two levels:
 | `endedUrl` | string | Last URL seen in accepted events. Initially equals `startedUrl`. | `"https://example.com/dashboard"` | All sessions |
 | `userAgent` | string | Browser user agent string taken from the background worker context. | `"Mozilla/5.0 ..."` | All sessions |
 | `eventCount` | number | Number of stored events. In code this is always `events.length`. | `42` | All sessions |
+| `navigationStack` | array of strings | Page history stack tracked by the background script for the session. Used to infer back navigation. | `["https://a", "https://b"]` | All sessions |
+| `navigationIndex` | number | Current index within `navigationStack`. | `1` | All sessions |
 | `events` | array of objects | Ordered event records for the session. | `[ {...}, {...} ]` | All sessions |
 
 ### Event-level fields
@@ -240,6 +244,10 @@ The exported JSON has two levels:
 | `maskedValue` | string | String of asterisks with the same length as the input value. Created for input types `password`, `email`, `tel`, `search`, `text`, `url`, `number`, `date`, and for all `textarea` values. | `"************"` | Masked `input`/`textarea` values only |
 | `selectedText` | string | Visible text of the currently selected `<option>`. | `"United States"` | Target is `select` with a selected option |
 | `visibilityState` | string | `document.visibilityState` at the time of the visibility change. | `"hidden"` | `visibility_change` |
+| `navigationType` | string | Page-entry type from the browser navigation timing API, usually `navigate`, `reload`, or `back_forward`. | `"back_forward"` | `page_load`, `back_navigation` |
+| `historyTraversal` | string | Whether a `back_forward` entry resolved to `back` or `forward` against the session history stack. A `back` result is stored as `back_navigation`. | `"back"` | `page_load`, `back_navigation` |
+| `persisted` | boolean | Whether the page entry came from a BFCache `pageshow` restore. | `true` | BFCache-backed `page_load`, `back_navigation` |
+| `pageTransition` | string | Browser event name that caused the page-entry log. Currently `"pageshow"` may appear for BFCache restores. | `"pageshow"` | BFCache-backed `page_load`, `back_navigation` |
 
 Notes on field presence:
 
@@ -259,8 +267,10 @@ Notes on field presence:
 ### How to read page and navigation signals
 
 - `page_load` indicates that logging became active on a page in the tracked tab.
+- `back_navigation` indicates that a history traversal was classified as a move back to an earlier page in the session.
 - `page_unload` indicates that the tracked page began unloading.
 - A sequence such as `page_unload` followed later by `page_load` usually means navigation or reload in the same tracked tab.
+- `navigationType = back_forward` does not automatically mean "back." The background script compares the current URL against the session history stack and stores `back_navigation` only when the traversal moves to an earlier stack index.
 - `startedUrl` is the first page URL of the session.
 - `endedUrl` is simply the last URL seen in accepted events, not necessarily a formal "final completed page."
 

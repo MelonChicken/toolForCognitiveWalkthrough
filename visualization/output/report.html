@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>User Journey Report</title>
+<style>
+body { font-family: Arial, sans-serif; margin: 24px; line-height: 1.5; }
+h1, h2 { margin: 0 0 8px 0; }
+.card { border: 1px solid #ccc; padding: 16px; margin: 12px 0; }
+table { border-collapse: collapse; width: 100%; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+img { max-width: 100%; border: 1px solid #ddd; }
+code { background: #f4f4f4; padding: 2px 4px; }
+</style>
+</head>
+<body>
+<h1>User Journey Report</h1>
+
+<div class="card">
+  <b>participantId</b>: P1<br>
+  <b>taskId</b>: T1<br>
+  <b>sessionId</b>: S368364<br>
+  <b>eventCount</b>: 680<br>
+  <b>startTime</b>: 26-03-26 13:21:02<br>
+  <b>endTime</b>: 26-03-26 13:22:50<br>
+  <b>backNavigationCount</b>: 0.0<br>
+  <b>totalTaskTimeSec</b>: 107.51<br>
+</div>
+
+<h2>1. Task Summary</h2>
+<img src="task_summary.png" alt="task summary">
+
+<h2>2. Page Visit Metrics</h2>
+<table>
+<thead><tr><th>Visit</th><th>Page</th><th>Entry Type</th><th>Start Time</th><th>End Time</th><th>Duration(s)</th><th>eventCount</th><th>Click</th><th>Scroll</th><th>KeyInput</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Q-net 자격의모든것</td><td>page_load</td><td>26-03-26 13:21:02</td><td>26-03-26 13:21:25</td><td>23.32</td><td>138</td><td>2</td><td>13</td><td>0</td></tr><tr><td>2</td><td>각종서식 자료실 목록</td><td>page_load</td><td>26-03-26 13:21:26</td><td>26-03-26 13:21:29</td><td>3.47</td><td>27</td><td>1</td><td>0</td><td>0</td></tr><tr><td>3</td><td>기출문제(기술사) 자료실 목록</td><td>page_load</td><td>26-03-26 13:21:29</td><td>26-03-26 13:21:40</td><td>11.11</td><td>54</td><td>2</td><td>3</td><td>9</td></tr><tr><td>4</td><td>공개문제 자료실 목록</td><td>page_load</td><td>26-03-26 13:21:41</td><td>26-03-26 13:21:47</td><td>5.82</td><td>36</td><td>2</td><td>0</td><td>0</td></tr><tr><td>5</td><td>기출문제(기술사) 자료실 목록</td><td>page_load</td><td>26-03-26 13:21:47</td><td>26-03-26 13:22:04</td><td>16.66</td><td>109</td><td>7</td><td>7</td><td>21</td></tr><tr><td>6</td><td>Q-net 자격의모든것</td><td>page_load</td><td>26-03-26 13:22:04</td><td>26-03-26 13:22:13</td><td>8.91</td><td>74</td><td>1</td><td>10</td><td>0</td></tr><tr><td>7</td><td>수험자 지참 준비물 조회</td><td>page_load</td><td>26-03-26 13:22:13</td><td>26-03-26 13:22:26</td><td>12.70</td><td>101</td><td>8</td><td>0</td><td>0</td></tr><tr><td>8</td><td>Q-net 자격의모든것</td><td>page_load</td><td>26-03-26 13:22:26</td><td>26-03-26 13:22:35</td><td>8.62</td><td>67</td><td>1</td><td>0</td><td>31</td></tr><tr><td>9</td><td>통합검색</td><td>page_load</td><td>26-03-26 13:22:36</td><td>26-03-26 13:22:41</td><td>5.25</td><td>45</td><td>1</td><td>13</td><td>0</td></tr>
+</tbody>
+</table>
+
+<img src="page_metrics.png" alt="page metrics">
+
+<h2>3. Page Visits</h2>
+<table>
+<thead><tr><th>Page</th><th>Start Time</th><th>End Time</th><th>Duration(s)</th></tr></thead>
+<tbody>
+<tr><td>Q-net 자격의모든것</td><td>26-03-26 13:21:02</td><td>26-03-26 13:21:25</td><td>23.32</td></tr><tr><td>각종서식 자료실 목록</td><td>26-03-26 13:21:26</td><td>26-03-26 13:21:29</td><td>3.47</td></tr><tr><td>기출문제(기술사) 자료실 목록</td><td>26-03-26 13:21:29</td><td>26-03-26 13:21:40</td><td>11.11</td></tr><tr><td>공개문제 자료실 목록</td><td>26-03-26 13:21:41</td><td>26-03-26 13:21:47</td><td>5.82</td></tr><tr><td>기출문제(기술사) 자료실 목록</td><td>26-03-26 13:21:47</td><td>26-03-26 13:22:04</td><td>16.66</td></tr><tr><td>Q-net 자격의모든것</td><td>26-03-26 13:22:04</td><td>26-03-26 13:22:13</td><td>8.91</td></tr><tr><td>수험자 지참 준비물 조회</td><td>26-03-26 13:22:13</td><td>26-03-26 13:22:26</td><td>12.70</td></tr><tr><td>Q-net 자격의모든것</td><td>26-03-26 13:22:26</td><td>26-03-26 13:22:35</td><td>8.62</td></tr><tr><td>통합검색</td><td>26-03-26 13:22:36</td><td>26-03-26 13:22:41</td><td>5.25</td></tr>
+</tbody>
+</table>
+
+<h2>4. Transitions</h2>
+<table>
+<thead><tr><th>From</th><th>To</th><th>From Time</th><th>To Time</th><th>Type</th><th>Evidence</th></tr></thead>
+<tbody>
+<tr><td>Q-net 자격의모든것</td><td>각종서식 자료실 목록</td><td>26-03-26 13:21:02</td><td>26-03-26 13:21:26</td><td>possible_back_or_other</td><td></td></tr><tr><td>각종서식 자료실 목록</td><td>기출문제(기술사) 자료실 목록</td><td>26-03-26 13:21:26</td><td>26-03-26 13:21:29</td><td>link_click</td><td>click: 기출문제(기술사)</td></tr><tr><td>기출문제(기술사) 자료실 목록</td><td>공개문제 자료실 목록</td><td>26-03-26 13:21:29</td><td>26-03-26 13:21:41</td><td>link_click</td><td>click: 공개문제</td></tr><tr><td>공개문제 자료실 목록</td><td>기출문제(기술사) 자료실 목록</td><td>26-03-26 13:21:41</td><td>26-03-26 13:21:47</td><td>link_click</td><td>click: 기출문제(기술사)</td></tr><tr><td>기출문제(기술사) 자료실 목록</td><td>Q-net 자격의모든것</td><td>26-03-26 13:21:47</td><td>26-03-26 13:22:04</td><td>possible_back_or_other</td><td></td></tr><tr><td>Q-net 자격의모든것</td><td>수험자 지참 준비물 조회</td><td>26-03-26 13:22:04</td><td>26-03-26 13:22:13</td><td>possible_back_or_other</td><td></td></tr><tr><td>수험자 지참 준비물 조회</td><td>Q-net 자격의모든것</td><td>26-03-26 13:22:13</td><td>26-03-26 13:22:26</td><td>possible_back_or_other</td><td></td></tr><tr><td>Q-net 자격의모든것</td><td>통합검색</td><td>26-03-26 13:22:26</td><td>26-03-26 13:22:36</td><td>possible_back_or_other</td><td></td></tr>
+</tbody>
+</table>
+
+<h2>5. Transition Graph</h2>
+<img src="transition_graph.png" alt="transition graph">
+
+<h2>6. Timeline</h2>
+<img src="timeline.png" alt="timeline">
+
+</body></html>
