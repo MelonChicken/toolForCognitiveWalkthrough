@@ -1,5 +1,14 @@
 let isRecording = false;
 
+function pad2(value) {
+    return String(value).padStart(2, '0');
+}
+
+function formatTimestamp(tsMs) {
+    const date = new Date(tsMs);
+    return `${pad2(date.getFullYear() % 100)}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())} ${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`;
+}
+
 // Ask Background if there's an active session on this tabId
 function checkState() {
     chrome.runtime.sendMessage({ type: 'CHECK_ACTIVE' }, (res) => {
@@ -167,9 +176,11 @@ function buildSelector(el) {
 }
 
 function logEvent(type, extraData) {
+    const now = Date.now();
     const event = {
         type,
-        timestamp: Date.now(),
+        timestamp: formatTimestamp(now),
+        timestampMs: now,
         url: window.location.href,
         title: document.title,
         viewportWidth: window.innerWidth,

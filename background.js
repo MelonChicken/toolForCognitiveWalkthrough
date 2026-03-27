@@ -1,6 +1,15 @@
 let session = null;
 let saveTimeout = null;
 
+function pad2(value) {
+    return String(value).padStart(2, '0');
+}
+
+function formatTimestamp(tsMs) {
+    const date = new Date(tsMs);
+    return `${pad2(date.getFullYear() % 100)}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())} ${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`;
+}
+
 // Load existing session on startup to survive service worker inactivity
 chrome.storage.local.get(['session'], (res) => {
     if (res.session) {
@@ -37,8 +46,10 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
                 taskId: msg.taskId,
                 sessionId: msg.sessionId,
                 tabId: tabs[0].id,
-                startTime: startTime,
+                startTime: formatTimestamp(startTime),
+                startTimeMs: startTime,
                 endTime: null,
+                endTimeMs: null,
                 startedUrl: tabs[0].url,
                 endedUrl: tabs[0].url,
                 userAgent: navigator.userAgent,
@@ -50,7 +61,8 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
             session.events.push({
                 index: 0,
                 type: 'session_start',
-                timestamp: startTime,
+                timestamp: formatTimestamp(startTime),
+                timestampMs: startTime,
                 elapsedMs: 0,
                 delay: 0,
                 url: tabs[0].url,
@@ -69,7 +81,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 
     } else if (msg.type === 'STOP') {
         if (session && !session.endTime) {
-            session.endTime = Date.now();
+            const endTime = Date.now();
+            session.endTime = formatTimestamp(endTime);
+            session.endTimeMs = endTime;
             saveSession();
             chrome.tabs.sendMessage(session.tabId, { type: 'STOP_RECORDING' }).catch(() => {});
         }
@@ -91,11 +105,14 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
         if (session && !session.endTime && sender.tab && sender.tab.id === session.tabId) {
             const event = msg.event || {};
             event.index = session.events.length;
-            event.elapsedMs = event.timestamp - session.startTime;
+            const eventTs = event.timestampMs ?? event.timestamp;
+            const sessionStartTs = session.startTimeMs ?? session.startTime;
+            event.elapsedMs = eventTs - sessionStartTs;
 
             let delay = 0;
             if (session.events.length > 0) {
-                delay = event.timestamp - session.events[session.events.length - 1].timestamp;
+                const prevTs = session.events[session.events.length - 1].timestampMs ?? session.events[session.events.length - 1].timestamp;
+                delay = eventTs - prevTs;
             }
             event.delay = delay;
 
