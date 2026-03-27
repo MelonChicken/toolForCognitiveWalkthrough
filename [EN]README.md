@@ -188,8 +188,10 @@ The exported JSON has two levels:
 | `taskId` | string | Researcher-entered task identifier from the popup. Defaults to `"T1"` if left blank when starting. | `"CheckoutTask"` | All sessions |
 | `sessionId` | string | Researcher-entered session identifier, or auto-generated in the popup as `"S" + random integer`. | `"S418233"` | All sessions |
 | `tabId` | number | Chrome tab ID that the session is bound to. Only events from this tab are accepted. | `127` | All sessions |
-| `startTime` | number | Unix time in milliseconds when the session started. | `1768792054123` | All sessions |
-| `endTime` | number or `null` | Unix time in milliseconds when Stop was pressed, or `null` while active. | `1768792120331` | All sessions |
+| `startTime` | string | Session start time stored in human-readable `YY-MM-DD HH:MM:SS` format. | `"26-03-27 19:00:03"` | All sessions |
+| `startTimeMs` | number | Unix milliseconds for the same instant as `startTime`. Used for calculations and ordering. | `1774605603757` | All sessions |
+| `endTime` | string or `null` | Stop time stored in `YY-MM-DD HH:MM:SS` format, or `null` while the session is still active. | `"26-03-27 19:00:41"` | All sessions |
+| `endTimeMs` | number or `null` | Unix milliseconds for the same instant as `endTime`, or `null` while active. | `1774605641042` | All sessions |
 | `startedUrl` | string | URL of the active tab at session start. | `"https://example.com/login"` | All sessions |
 | `endedUrl` | string | Last URL seen in accepted events. Initially equals `startedUrl`. | `"https://example.com/dashboard"` | All sessions |
 | `userAgent` | string | Browser user agent string taken from the background worker context. | `"Mozilla/5.0 ..."` | All sessions |
@@ -202,8 +204,9 @@ The exported JSON has two levels:
 | --- | --- | --- | --- | --- |
 | `index` | number | Zero-based event order within the session. Added in `background.js`. | `0` | All stored events |
 | `type` | string | Event type name. | `"click"` | All stored events |
-| `timestamp` | number | Unix time in milliseconds when the event object was created. | `1768792055340` | All stored events |
-| `elapsedMs` | number | Milliseconds since `session.startTime`. Added in `background.js`. | `1217` | All stored events |
+| `timestamp` | string | Event creation time stored in human-readable `YY-MM-DD HH:MM:SS` format. | `"26-03-27 19:00:04"` | All stored events |
+| `timestampMs` | number | Unix milliseconds for the same instant as `timestamp`. Used for sorting and duration math. | `1774605604363` | All stored events |
+| `elapsedMs` | number | Milliseconds since `session.startTimeMs`. Added in `background.js`. | `1217` | All stored events |
 | `delay` | number | Milliseconds since the previous stored event. For the first event it is `0`. | `318` | All stored events |
 | `url` | string | `window.location.href` at the moment of the event. | `"https://example.com/form"` | All stored events except the synthetic `session_start` event also has it from tab state |
 | `title` | string | `document.title` for content-script events, or the tab title for `session_start`. | `"Example Form"` | All stored events |
@@ -248,7 +251,8 @@ Notes on field presence:
 
 ### How to read timing fields
 
-- `timestamp` is the raw event time in Unix milliseconds.
+- `timestamp` is the human-readable event time string.
+- `timestampMs` is the raw Unix-millisecond value for the same event time.
 - `elapsedMs` is time since the session started. This is useful for reconstructing the participant timeline within the task.
 - `delay` is the time gap from the immediately previous stored event. Large `delay` values can indicate pauses, reading time, hesitation, task planning, or idle time, but they do not by themselves explain why the participant paused.
 

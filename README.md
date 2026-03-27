@@ -196,8 +196,10 @@ export되는 JSON은 두 수준으로 구성됩니다.
 | `taskId`        | string           | 팝업에서 연구자가 입력한 과업 식별자입니다. 비워 두면 시작 시 `"T1"`이 기본값으로 들어갑니다.  | `"CheckoutTask"`                  | 모든 세션 |
 | `sessionId`     | string           | 연구자가 입력한 세션 식별자 또는 팝업이 `"S" + 임의 정수` 형태로 자동 생성한 값입니다.     | `"S418233"`                       | 모든 세션 |
 | `tabId`         | number           | 세션이 연결된 Chrome 탭 ID입니다. 이 탭에서 온 이벤트만 수락됩니다.               | `127`                             | 모든 세션 |
-| `startTime`     | number           | 세션이 시작된 시각의 Unix 밀리초 시간입니다.                               | `1768792054123`                   | 모든 세션 |
-| `endTime`       | number 또는 `null` | Stop 버튼이 눌렸을 때의 Unix 밀리초 시간 또는, 세션이 아직 활성 상태라면 `null`입니다. | `1768792120331`                   | 모든 세션 |
+| `startTime`     | string           | 세션 시작 시각을 사람이 읽기 쉬운 `YY-MM-DD HH:MM:SS` 형식으로 저장한 값입니다. | `"26-03-27 19:00:03"`             | 모든 세션 |
+| `startTimeMs`   | number           | `startTime`과 동일한 시각의 Unix 밀리초 값입니다. 계산과 정렬에 사용됩니다.        | `1774605603757`                   | 모든 세션 |
+| `endTime`       | string 또는 `null` | Stop 버튼이 눌렸을 때의 시각을 `YY-MM-DD HH:MM:SS` 형식으로 저장한 값 또는, 세션이 아직 활성 상태라면 `null`입니다. | `"26-03-27 19:00:41"`             | 모든 세션 |
+| `endTimeMs`     | number 또는 `null` | `endTime`과 동일한 시각의 Unix 밀리초 값 또는, 세션이 아직 활성 상태라면 `null`입니다. | `1774605641042`                   | 모든 세션 |
 | `startedUrl`    | string           | 세션 시작 시 활성 탭의 URL입니다.                                     | `"https://example.com/login"`     | 모든 세션 |
 | `endedUrl`      | string           | 수락된 이벤트들 중 마지막으로 확인된 URL입니다. 처음에는 `startedUrl`과 같습니다.     | `"https://example.com/dashboard"` | 모든 세션 |
 | `userAgent`     | string           | background worker 컨텍스트에서 가져온 브라우저 user agent 문자열입니다.      | `"Mozilla/5.0 ..."`               | 모든 세션 |
@@ -210,8 +212,9 @@ export되는 JSON은 두 수준으로 구성됩니다.
 | ----------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------ |
 | `index`           | number           | 세션 내 0부터 시작하는 이벤트 순서 번호입니다. `background.js`에서 부여됩니다.                                                                                | `0`                               | 모든 저장 이벤트                                              |
 | `type`            | string           | 이벤트 타입 이름입니다.                                                                                                                       | `"click"`                         | 모든 저장 이벤트                                              |
-| `timestamp`       | number           | 이벤트 객체가 생성된 시각의 Unix 밀리초 시간입니다.                                                                                                     | `1768792055340`                   | 모든 저장 이벤트                                              |
-| `elapsedMs`       | number           | `session.startTime` 이후 경과한 밀리초입니다. `background.js`에서 추가됩니다.                                                                         | `1217`                            | 모든 저장 이벤트                                              |
+| `timestamp`       | string           | 이벤트 객체가 생성된 시각을 사람이 읽기 쉬운 `YY-MM-DD HH:MM:SS` 형식으로 저장한 값입니다.                                                                                  | `"26-03-27 19:00:04"`             | 모든 저장 이벤트                                              |
+| `timestampMs`     | number           | `timestamp`와 동일한 시각의 Unix 밀리초 값입니다. 정렬, 경과시간 계산, 지연 계산에 사용됩니다.                                                                          | `1774605604363`                   | 모든 저장 이벤트                                              |
+| `elapsedMs`       | number           | `session.startTimeMs` 이후 경과한 밀리초입니다. `background.js`에서 추가됩니다.                                                                     | `1217`                            | 모든 저장 이벤트                                              |
 | `delay`           | number           | 직전 저장 이벤트와의 시간 간격(밀리초)입니다. 첫 이벤트는 `0`입니다.                                                                                           | `318`                             | 모든 저장 이벤트                                              |
 | `url`             | string           | 이벤트 발생 시점의 `window.location.href`입니다.                                                                                               | `"https://example.com/form"`      | 모든 저장 이벤트. 단, synthetic `session_start`는 탭 상태에서 가져옵니다. |
 | `title`           | string           | content-script 이벤트에서는 `document.title`, `session_start`에서는 탭 제목입니다.                                                                 | `"Example Form"`                  | 모든 저장 이벤트                                              |
@@ -256,7 +259,8 @@ export되는 JSON은 두 수준으로 구성됩니다.
 
 ### 시간 관련 필드 해석
 
-* `timestamp`는 원시 이벤트 시각(Unix 밀리초)입니다.
+* `timestamp`는 사람이 읽기 쉬운 이벤트 시각 문자열입니다.
+* `timestampMs`는 동일한 시각의 원시 Unix 밀리초 값입니다.
 * `elapsedMs`는 세션 시작 이후 경과 시간입니다. 참가자의 과업 타임라인을 재구성할 때 유용합니다.
 * `delay`는 직전 저장 이벤트와의 시간 간격입니다. 값이 크면 읽기, 망설임, 계획, 정지 시간을 의미할 수 있지만, 왜 멈췄는지를 이 값만으로 알 수는 없습니다.
 
@@ -349,121 +353,288 @@ export되는 JSON은 두 수준으로 구성됩니다.
 아래 예시는 현재 export 구조와 필드명을 반영한 것입니다. 모든 이벤트가 모든 필드를 가지는 것은 아닙니다.
 
 ```json
-{
-  "participantId": "P01",
-  "taskId": "Task_1",
-  "sessionId": "S418233",
-  "tabId": 127,
-  "startTime": 1768792054123,
-  "endTime": 1768792120331,
-  "startedUrl": "https://example.com/login",
-  "endedUrl": "https://example.com/dashboard",
-  "userAgent": "Mozilla/5.0 ...",
-  "eventCount": 5,
+  {
+  "participantId": "testForTimeExpression",
+  "taskId": "Task01",
+  "sessionId": "S823154",
+  "tabId": 790767241,
+  "startTime": "26-03-27 19:00:03",
+  "startTimeMs": 1774605603757,
+  "endTime": "26-03-27 19:00:41",
+  "endTimeMs": 1774605641042,
+  "startedUrl": "https://www.q-net.or.kr/man001.do?gSite=Q",
+  "endedUrl": "https://www.q-net.or.kr/cst006.do?id=cst00602&gSite=Q&gId=",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36",
+  "eventCount": 220,
   "events": [
     {
       "index": 0,
       "type": "session_start",
-      "timestamp": 1768792054123,
+      "timestamp": "26-03-27 19:00:03",
+      "timestampMs": 1774605603757,
       "elapsedMs": 0,
       "delay": 0,
-      "url": "https://example.com/login",
-      "title": "Example Login",
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
       "viewportWidth": null,
       "viewportHeight": null,
       "scrollX": null,
       "scrollY": null
     },
     {
-      "index": 1,
       "type": "page_load",
-      "timestamp": 1768792054300,
-      "elapsedMs": 177,
-      "delay": 177,
-      "url": "https://example.com/login",
-      "title": "Example Login",
-      "viewportWidth": 1440,
-      "viewportHeight": 821,
-      "scrollX": 0,
-      "scrollY": 0
-    },
-    {
-      "index": 2,
-      "type": "click",
-      "timestamp": 1768792055340,
-      "elapsedMs": 1217,
-      "delay": 1040,
-      "url": "https://example.com/login",
-      "title": "Example Login",
-      "viewportWidth": 1440,
-      "viewportHeight": 821,
+      "timestamp": "26-03-27 19:00:03",
+      "timestampMs": 1774605603758,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
       "scrollX": 0,
       "scrollY": 0,
-      "x": 512,
-      "y": 284,
-      "pageX": 512,
-      "pageY": 284,
+      "index": 1,
+      "elapsedMs": 1,
+      "delay": 1
+    },
+    {
+      "type": "mousemove",
+      "timestamp": "26-03-27 19:00:04",
+      "timestampMs": 1774605604363,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
+      "scrollX": 0,
+      "scrollY": 0,
+      "x": 1578,
+      "y": 222,
+      "pageX": 1578,
+      "pageY": 222,
       "button": 0,
-      "tagName": "button",
-      "id": "submit-btn",
-      "className": "btn primary",
-      "text": "Sign in",
-      "selector": "#submit-btn"
+      "tagName": "div",
+      "id": "bbs_notice",
+      "className": "mCont bg_W1",
+      "text": "공지사항\n\n국가기술자격 응시자격서류 제출 유의사항 안내\n\n국가자격 인정신분증 범위 조정 안...",
+      "selector": "#bbs_notice",
+      "index": 2,
+      "elapsedMs": 606,
+      "delay": 605
     },
     {
+      "type": "mousemove",
+      "timestamp": "26-03-27 19:00:04",
+      "timestampMs": 1774605604785,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
+      "scrollX": 0,
+      "scrollY": 0,
+      "x": 1581,
+      "y": 211,
+      "pageX": 1581,
+      "pageY": 211,
+      "button": 0,
+      "tagName": "b",
+      "className": "mTit2",
+      "text": "공지사항",
+      "selector": "div#bbs_notice > b.mTit2",
       "index": 3,
-      "type": "input",
-      "timestamp": 1768792056900,
-      "elapsedMs": 2777,
-      "delay": 1560,
-      "url": "https://example.com/login",
-      "title": "Example Login",
-      "viewportWidth": 1440,
-      "viewportHeight": 821,
-      "scrollX": 0,
-      "scrollY": 0,
-      "tagName": "input",
-      "name": "email",
-      "selector": "input[name=\"email\"]",
-      "inputType": "email",
-      "checked": false,
-      "valueLength": 12,
-      "maskedValue": "************"
+      "elapsedMs": 1028,
+      "delay": 422
     },
     {
-      "index": 4,
-      "type": "visibility_change",
-      "timestamp": 1768792059000,
-      "elapsedMs": 4877,
-      "delay": 2100,
-      "url": "https://example.com/login",
-      "title": "Example Login",
-      "viewportWidth": 1440,
-      "viewportHeight": 821,
+      "type": "mousemove",
+      "timestamp": "26-03-27 19:00:04",
+      "timestampMs": 1774605604914,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
       "scrollX": 0,
       "scrollY": 0,
-      "visibilityState": "hidden"
-    }
-  ]
-}
+      "x": 1209,
+      "y": 170,
+      "pageX": 1209,
+      "pageY": 170,
+      "button": 0,
+      "tagName": "div",
+      "className": "mCont bg_G1 bg_ico03",
+      "text": "자격증 신청\n\n국가기술자격\n\n바로가기",
+      "selector": "div.second > div.second_cont > div.mCont.bg_G1.bg_ico03",
+      "index": 4,
+      "elapsedMs": 1157,
+      "delay": 129
+    },
+    {
+      "type": "mousemove",
+      "timestamp": "26-03-27 19:00:05",
+      "timestampMs": 1774605605018,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
+      "scrollX": 0,
+      "scrollY": 0,
+      "x": 714,
+      "y": 223,
+      "pageX": 714,
+      "pageY": 223,
+      "button": 0,
+      "tagName": "div",
+      "className": "mCont bg_B2 bg_ico02",
+      "text": "시험 결과 보기\n\n시험결과는 60일간 확인 가능\n\n바로가기",
+      "selector": "div.second > div.second_cont > div.mCont.bg_B2.bg_ico02",
+      "index": 5,
+      "elapsedMs": 1261,
+      "delay": 104
+    },
+    {
+      "type": "mousemove",
+      "timestamp": "26-03-27 19:00:05",
+      "timestampMs": 1774605605123,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
+      "scrollX": 0,
+      "scrollY": 0,
+      "x": 534,
+      "y": 287,
+      "pageX": 534,
+      "pageY": 287,
+      "button": 0,
+      "tagName": "p",
+      "className": "mbodytxt2 c_White",
+      "text": "원서접수 초일, 접수시작 시간안내\n기술사, 기능장, 기사, 정기·상시 기능사 오전 10:0...",
+      "selector": "div#choilText > div.mCont.bg_B1.bg_ico01 > p.mbodytxt2.c_White",
+      "index": 6,
+      "elapsedMs": 1366,
+      "delay": 105
+    },
+    {
+      "type": "mousemove",
+      "timestamp": "26-03-27 19:00:05",
+      "timestampMs": 1774605605267,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
+      "scrollX": 0,
+      "scrollY": 0,
+      "x": 461,
+      "y": 319,
+      "pageX": 461,
+      "pageY": 319,
+      "button": 0,
+      "tagName": "p",
+      "className": "mbodytxt2 c_White",
+      "text": "원서접수 초일, 접수시작 시간안내\n기술사, 기능장, 기사, 정기·상시 기능사 오전 10:0...",
+      "selector": "div#choilText > div.mCont.bg_B1.bg_ico01 > p.mbodytxt2.c_White",
+      "index": 7,
+      "elapsedMs": 1510,
+      "delay": 144
+    },
+    {
+      "type": "mousemove",
+      "timestamp": "26-03-27 19:00:05",
+      "timestampMs": 1774605605371,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
+      "scrollX": 0,
+      "scrollY": 0,
+      "x": 357,
+      "y": 375,
+      "pageX": 357,
+      "pageY": 375,
+      "button": 0,
+      "tagName": "p",
+      "className": "mbodytxt2 c_White",
+      "text": "원서접수 초일, 접수시작 시간안내\n기술사, 기능장, 기사, 정기·상시 기능사 오전 10:0...",
+      "selector": "div#choilText > div.mCont.bg_B1.bg_ico01 > p.mbodytxt2.c_White",
+      "index": 8,
+      "elapsedMs": 1614,
+      "delay": 104
+    },
+    {
+      "type": "mousemove",
+      "timestamp": "26-03-27 19:00:05",
+      "timestampMs": 1774605605477,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
+      "scrollX": 0,
+      "scrollY": 0,
+      "x": 163,
+      "y": 447,
+      "pageX": 163,
+      "pageY": 447,
+      "button": 0,
+      "tagName": "span",
+      "className": "",
+      "text": "원서접수하기",
+      "selector": "div.mCont.bg_B1.bg_ico01 > a.link.c_White > span",
+      "index": 9,
+      "elapsedMs": 1720,
+      "delay": 106
+    },
+    {
+      "type": "focus",
+      "timestamp": "26-03-27 19:00:05",
+      "timestampMs": 1774605605781,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
+      "scrollX": 0,
+      "scrollY": 0,
+      "index": 10,
+      "elapsedMs": 2024,
+      "delay": 304
+    },
+    {
+      "type": "focus",
+      "timestamp": "26-03-27 19:00:05",
+      "timestampMs": 1774605605791,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
+      "scrollX": 0,
+      "scrollY": 0,
+      "tagName": "a",
+      "className": "link c_White",
+      "text": "원서접수하기",
+      "href": "https://www.q-net.or.kr/rcv202.do?id=rcv20210&gSite=Q&gId=",
+      "selector": "div#choilText > div.mCont.bg_B1.bg_ico01 > a.link.c_White",
+      "index": 11,
+      "elapsedMs": 2034,
+      "delay": 10
+    },
+    {
+      "type": "click",
+      "timestamp": "26-03-27 19:00:05",
+      "timestampMs": 1774605605874,
+      "url": "https://www.q-net.or.kr/man001.do?gSite=Q",
+      "title": "Q-net 자격의모든것",
+      "viewportWidth": 1707,
+      "viewportHeight": 932,
+      "scrollX": 0,
+      "scrollY": 0,
+      "x": 161,
+      "y": 447,
+      "pageX": 161,
+      "pageY": 447,
+      "button": 0,
+      "tagName": "span",
+      "className": "",
+      "text": "원서접수하기",
+      "selector": "div.mCont.bg_B1.bg_ico01 > a.link.c_White > span",
+      "index": 12,
+      "elapsedMs": 2117,
+      "delay": 83}
+    ]
+  }
 ```
-
-## 검증 메모
-
-이 README는 현재 코드의 다음 파일들을 직접 읽고 작성된 내용입니다.
-
-* `manifest.json`
-* `background.js`
-* `content.js`
-* `popup.js`
-* `popup.html`
-* `popup.css`
-
-이벤트 목록, 필드명, throttle 값, storage 동작, export 구조, `session_stop` 관련 주의점은 모두 의도된 설계가 아니라 **현재 코드 구현**을 기준으로 확인한 내용입니다.
-
-## 확인된 모호점 및 불일치
-
-* `content.js`에는 `session_stop`가 구현되어 있지만, `background.js`가 먼저 `endTime`을 설정하기 때문에 이 이벤트는 보통 export되지 않습니다.
-* 확장 프로그램 설명은 “Cognitive Walkthrough 실험용 연구 로깅”이지만, 실제 구현은 한 탭에 대한 일반 상호작용 로거에 가깝고 walkthrough 전용 분석 시스템은 아닙니다.
-* `checked`는 모든 `input`과 `textarea`에 대해 복사되지만, 실제로 의미가 큰 것은 checkbox/radio 정도입니다.
-* `page_load`는 브라우저 navigation timing API와 연결된 값이 아니라, 해당 페이지에서 로깅이 활성화될 때 생성되는 synthetic event입니다.
